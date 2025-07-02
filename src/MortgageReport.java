@@ -1,15 +1,17 @@
 import java.text.NumberFormat;
 
 public class MortgageReport {
+    private final NumberFormat currency;
     private MortgageCalculations calculator;
 
     public MortgageReport(MortgageCalculations calculator) {
         this.calculator = calculator;
+        currency = NumberFormat.getCurrencyInstance();
     }
 
     public void printMortgage() {
         double mortgage = calculator.calculateMortgage();
-        String formattedMortgage = NumberFormat.getCurrencyInstance().format(mortgage);
+        String formattedMortgage = currency.format(mortgage);
         System.out.println();
         System.out.println("Monthly Mortgage");
         System.out.println("----------------");
@@ -20,10 +22,13 @@ public class MortgageReport {
         System.out.println();
         System.out.println("Remaining Balance after each payment");
         System.out.println("------------------------------------");
-        for(short month = 1; month <= calculator.getYears() * MortgageCalculations.MONTHS_IN_A_YEAR; month++){
-            double balance = calculator.calculateBalance(month);
-            String remainingBalance = NumberFormat.getCurrencyInstance().format(balance);
+
+        int month = 1;
+        for (double balance : calculator.getRemainingBalances()){
+            String remainingBalance = currency.format(balance);
             System.out.println(month +") "+remainingBalance);
+            month++;
         }
     }
+
 }

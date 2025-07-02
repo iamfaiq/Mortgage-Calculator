@@ -1,6 +1,6 @@
 public class MortgageCalculations {
-    public final static byte MONTHS_IN_A_YEAR = 12;
-    public final static byte PERCENT = 100;
+    private final static byte MONTHS_IN_A_YEAR = 12;
+    private final static byte PERCENT = 100;
 
     private int principal;
     private float annualInterestRate;
@@ -14,8 +14,8 @@ public class MortgageCalculations {
 
     //formulas source: https://www.mortgageprofessor.com/formulas.htm
     public double calculateBalance(short numberOfPaymentsMade) {
-        float rate = annualInterestRate / (PERCENT * MONTHS_IN_A_YEAR);
-        int totalMonthlyPayments = years * MONTHS_IN_A_YEAR;
+        float rate = getMonthlyInterestRate();
+        int totalMonthlyPayments = getNumberOfPayments();
 
         double balance = principal *
                 ((Math.pow((1 + rate), totalMonthlyPayments)) - (Math.pow((1 + rate), numberOfPaymentsMade)))
@@ -25,15 +25,28 @@ public class MortgageCalculations {
     }
 
     public double calculateMortgage() {
-        float rate = annualInterestRate / (PERCENT * MONTHS_IN_A_YEAR);
-        int totalMonthlyPayments = years * MONTHS_IN_A_YEAR;
+        float rate = getMonthlyInterestRate();
+        int totalMonthlyPayments = getNumberOfPayments();
         double expPart = Math.pow((1 + rate), totalMonthlyPayments);
         double mortgage = principal * ((rate * expPart) / (expPart - 1));
 
         return mortgage;
     }
 
-    public byte getYears() {
-        return years;
+    public double[] getRemainingBalances(){
+        var balances = new double[getNumberOfPayments()];
+        for(short month = 1; month <= balances.length; month++)
+            balances[month-1] = calculateBalance(month);
+
+        return balances;
     }
+
+    private int getNumberOfPayments() {
+        return years * MONTHS_IN_A_YEAR;
+    }
+
+    private float getMonthlyInterestRate() {
+        return annualInterestRate / (PERCENT * MONTHS_IN_A_YEAR);
+    }
+
 }
