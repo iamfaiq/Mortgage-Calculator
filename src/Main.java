@@ -9,10 +9,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
-        int principal = (int)readNumber("Principal($1k - $1M): ", scanner, 1000, 1_000_000);
-        float interestRate = (float)readNumber("Annual Interest Rate: ", scanner, 1, 30);
-        byte years = (byte)readNumber("Period(Years): ", scanner, 1, 30);
+        int principal = (int) Console.readNumber("Principal($1k - $1M): ", 1000, 1_000_000);
+        float interestRate = (float) Console.readNumber("Annual Interest Rate: ", 1, 30);
+        byte years = (byte) Console.readNumber("Period(Years): ", 1, 30);
 
         printMortgage(principal, interestRate, years);
 
@@ -38,18 +37,6 @@ public class Main {
             String remainingBalance = NumberFormat.getCurrencyInstance().format(balance);
             System.out.println(month +") "+remainingBalance);
         }
-    }
-
-    public static double readNumber(String prompt, Scanner scanner, int min, int max){
-        double numberRead = 0.0;
-        while (true) {
-            System.out.print(prompt);
-            numberRead = (double) scanner.nextDouble();
-            if ((numberRead >= min) && (numberRead <= max))
-                break;
-            System.out.println("Enter a number between "+min+" and "+max);
-        }
-        return numberRead;
     }
 
     //formulas source: https://www.mortgageprofessor.com/formulas.htm
