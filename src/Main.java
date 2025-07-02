@@ -1,8 +1,12 @@
+import java.text.NumberFormat;
 import java.util.Scanner;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
+    final static byte MONTHS_IN_A_YEAR = 12;
+    final static byte PERCENT = 100;
+
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
@@ -12,10 +16,15 @@ public class Main {
         byte years = (byte)readNumber("Period(Years): ", scanner, 1, 30);
 
         System.out.println();
-        System.out.println("You've entered----- ");
-        System.out.println("Principal: "+principal);
-        System.out.println("Annural Interest Rate: "+interestRate);
-        System.out.println("Amortization Period: "+years);
+        String monthlyMortgage = NumberFormat.getCurrencyInstance().format(calculateMortgage(principal,interestRate,years));
+        System.out.println("Your monthly amount due will be: "+monthlyMortgage);
+
+        System.out.println();
+        System.out.println("Remaining amount due after each month:");
+        for (short i = 1; i<=years*MONTHS_IN_A_YEAR;i++){
+            String balance = NumberFormat.getCurrencyInstance().format(calculateBalance(principal,interestRate,years,i));
+            System.out.println(i+") "+balance);
+        }
 
     }
 
@@ -30,4 +39,26 @@ public class Main {
         }
         return numberRead;
     }
+
+    //formulas source: https://www.mortgageprofessor.com/formulas.htm
+    public static double calculateBalance(int principal, float annualInterestRate, byte years, short numberOfPaymentsMade){
+        float rate = annualInterestRate/(PERCENT*MONTHS_IN_A_YEAR);
+        int totalMonthlyPayments = years*MONTHS_IN_A_YEAR;
+
+        double balance = principal*
+                ((Math.pow((1+rate), totalMonthlyPayments))-(Math.pow((1+rate), numberOfPaymentsMade)))
+                /((Math.pow((1+rate), totalMonthlyPayments))-1);
+
+        return balance;
+    }
+
+    public static double calculateMortgage(int principal, float annualInterestRate, byte years){
+        float rate = annualInterestRate/(PERCENT*MONTHS_IN_A_YEAR);
+        int totalMonthlyPayments = years*MONTHS_IN_A_YEAR;
+        double expPart = Math.pow((1+rate), totalMonthlyPayments);
+        double mortgage = principal*((rate*expPart)/(expPart-1));
+
+        return mortgage;
+    }
+
 }
